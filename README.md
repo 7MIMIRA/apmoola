@@ -78,14 +78,14 @@ type Query {
 
 # Supports
 - Listing
-  - [x] apps
-  - [x] stages
-  - [x] events
-  - [x] events in an app
-  - [x] stages in an app
-  - [x] events at a stage
-  - [x] stage for an event
-  - [x] events that occur between two dates
+  - apps
+  - stages
+  - events
+  - events in an app
+  - stages in an app
+  - events at a stage
+  - stage for an event
+  - events that occur between two dates
 
 - Querying a single
   - app
