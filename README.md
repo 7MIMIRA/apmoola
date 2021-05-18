@@ -26,7 +26,7 @@ npm start
 --data '{"query": "{ apps { name events { name }}}"}' \
 http://localhost:4000/
  ```
- ## Other methods can be found [here](https://www.apollographql.com/blog/4-simple-ways-to-call-a-graphql-api-a6807bcdb355/)
+ ### Other methods can be found [here](https://www.apollographql.com/blog/4-simple-ways-to-call-a-graphql-api-a6807bcdb355/)
 
 <br>
 <br>
