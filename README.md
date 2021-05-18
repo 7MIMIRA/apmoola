@@ -93,9 +93,9 @@ type Query {
   - event
 
 - Searching by name
-  - app
-  - stage
-  - event
+  - apps
+  - stages
+  - events
 
 <br>
 
