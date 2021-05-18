@@ -4,14 +4,14 @@ module.exports = gql`
   type App {
     id: ID
     name: String
-    events: [Event]
+    events(start: Int, end: Int): [Event]
     stages: [Stage]
   }
 
   type Stage {
     id: ID
     name: String
-    events: [Event]
+    events(start: Int, end: Int): [Event]
   }
 
   type Event {
@@ -29,7 +29,7 @@ module.exports = gql`
   type Query {
     apps: [App]
     stages: [Stage]
-    events: [Event]
+    events(start: Int, end: Int): [Event]
 
     app(name: String): App
     stage(name: String): Stage
