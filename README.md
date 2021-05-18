@@ -1,5 +1,7 @@
 # apmoola
-__A rockin GraphQL API__
+### A rockin GraphQL API
+
+<br>
 
 # Setup
 1. Fork and clone the repo
@@ -11,21 +13,91 @@ npm install
 ```
 npm start
 ```
-4. visit http://localhost:4000/ to open GraphQL Playground!
-<br><br>
-## Supported Queries
-- List all apps
-- List all stages
-- List all events
-- Query a single app
-- Query a single stage
-- Query a single event
-- Search the stages by name
-- Search the events by name
-- List all events in an app
-- List all stages in an app
-- Get stage in an event
-- List events at a stage
+4. visit http://localhost:4000/ to open GraphQL Playground and run queries on your locally hosted GraphQL API
 
-## Need to Implement
-- Query events that occur between two dates
+   -- or --
+
+    Call the API using your favorite tool
+ ## Curl Example
+ ```
+ curl \
+-X POST \
+-H "Content-Type: application/json" \
+--data '{"query": "{ apps { name events { name }}}"}' \
+http://localhost:4000/
+ ```
+ ## Other methods can be found [here](https://www.apollographql.com/blog/4-simple-ways-to-call-a-graphql-api-a6807bcdb355/)
+
+<br>
+<br>
+
+# Schema
+```
+# start and end arguments for events are not required
+# if passed in, events will be filtered to include only those
+# that fall within the start and end dates (inclusive)
+# Format of start and end values needs to be in milliseconds since Unix Epoch
+
+type App {
+  id: ID!
+  name: String!
+  events(start: Int, end: Int): [Event!]!
+  stages: [Stage!]!
+}
+
+type Stage {
+  id: ID!
+  name: String!
+  events(start: Int, end: Int): [Event!]!
+}
+
+type Event {
+  id: ID!
+  appId: ID!
+  stageId: ID!
+  name: String!
+  description: String!
+  image: String!
+  startsAt: Int!
+  endsAt: Int!
+  stage: Stage!
+}
+
+type Query {
+  apps: [App!]!
+  stages: [Stage!]!
+  events(start: Int, end: Int): [Event!]!
+
+  app(name: String!): App!
+  stage(name: String!): Stage!
+  event(name: String!): Event!
+}
+```
+
+<br>
+
+# Supports
+- Listing
+  - [x] apps
+  - [x] stages
+  - [x] events
+  - [x] events in an app
+  - [x] stages in an app
+  - [x] events at a stage
+  - [x] stage for an event
+  - [x] events that occur between two dates
+
+- Querying a single
+  - app
+  - stage
+  - event
+
+- Searching by name
+  - app
+  - stage
+  - event
+
+<br>
+
+# TODO
+- Mutations to allow adding, updating, and removing events and stages
