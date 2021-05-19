@@ -19,7 +19,7 @@ module.exports = {
     addStage: (parent, args) => {
       const ID = generateID(args.name);
       const newStage = { id: ID, name: args.name };
-      const stageAlreadyExists = dataSources.stages.filter(stage => stage.name === newStage.name).length > 0;
+      const stageAlreadyExists = dataSources.stages.some(stage => stage.name === newStage.name);
       if (stageAlreadyExists) { return };
       dataSources.stages.push(newStage);
       return newStage;
@@ -51,7 +51,7 @@ module.exports = {
     addEvent: (parent, args) => {
       const ID = generateID(args.name);
       const newEvent = { id: ID, ...args };
-      const eventAlreadyExists = dataSources.events.filter(event => event.id === newEvent.id).length > 0;
+      const eventAlreadyExists = dataSources.events.some(event => event.id === newEvent.id);
       if (eventAlreadyExists) { return };
       dataSources.events.push(newEvent);
       return newEvent;
