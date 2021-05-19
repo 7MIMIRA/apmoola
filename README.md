@@ -67,9 +67,9 @@ type Query {
   stages: [Stage!]!
   events(start: Int, end: Int): [Event!]!
 
-  app(name: String!): App!
-  stage(name: String!): Stage!
-  event(name: String!): Event!
+  app(id: ID, name: String): App!
+  stage(id: ID, name: String): Stage!
+  event(id: ID, name: String): Event!
 }
 
 type Mutation {
