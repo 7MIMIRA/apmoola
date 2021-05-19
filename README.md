@@ -77,29 +77,29 @@ type Query {
 
 # Supports
 - Listing
-  - apps
-  - stages
-  - events
-  - events in an app
-  - stages in an app
-  - events at a stage
-  - stage for an event
-  - events that occur between two dates
+  - Apps
+  - Stages
+  - Events
+  - Events in an app
+  - Stages in an app
+  - Events at a stage
+  - Stage for an event
+  - Events that occur between two dates
 
 - Querying a single
-  - app
-  - stage
-  - event
+  - App
+  - Stage
+  - Event
 
 - Searching by name
-  - apps
-  - stages
-  - events
+  - Apps
+  - Stages
+  - Events
 
 - Adding, updating, and removing
-  - stages
+  - Stages
+  - Events
 
 <br>
 
 # TODO
-- Mutations to allow adding, updating, and removing events
