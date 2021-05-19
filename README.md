@@ -96,7 +96,10 @@ type Query {
   - stages
   - events
 
+- Adding, updating, and removing
+  - stages
+
 <br>
 
 # TODO
-- Mutations to allow adding, updating, and removing events and stages
+- Mutations to allow adding, updating, and removing events
