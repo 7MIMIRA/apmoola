@@ -10,9 +10,18 @@ module.exports = {
       if (!start && !end) { return dataSources.events }
       return dataSources.events.filter(event => isWithinTimeWindow(start, end, event.startsAt, event.endsAt));
     },
-    app: (parent, args) => dataSources.apps.filter(app => app.name === args.name)[0],
-    stage: (parent, args) => dataSources.stages.filter(stage => stage.name === args.name)[0],
-    event: (parent, args) => dataSources.events.filter(event => event.name === args.name)[0]
+    app: (parent, args) => {
+      const paramName = args.id ? 'id' : 'name';
+      return dataSources.apps.find(app => app[paramName] === args[paramName]);
+    },
+    stage: (parent, args) => {
+      const paramName = args.id ? 'id' : 'name';
+      return dataSources.stages.find(stage => stage[paramName] === args[paramName]);
+    },
+    event: (parent, args) => {
+      const paramName = args.id ? 'id' : 'name';
+      return dataSources.events.find(event => event[paramName] === args[paramName]);
+    }
   },
 
   Mutation: {
