@@ -71,32 +71,54 @@ type Query {
   stage(name: String!): Stage!
   event(name: String!): Event!
 }
+
+type Mutation {
+  addStage(name: String!): Stage
+
+  # id value will determine which stage is being updated
+  updateStage(id: ID!, name: String): Stage
+
+  # either id or name value can be used to find the stage to be removed
+  removeStage(id: ID, name: String): Stage
+
+  addEvent(appId: ID!, stageId: ID!, name: String!, description: String!, image: String!, startsAt: Int!, endsAt: Int!): Event
+
+  # id value will determine which event is being updated
+  updateEvent(id: ID!, appId: ID, stageId: ID, name: String, description: String, image: String, startsAt: Int, endsAt: Int): Event
+
+  removeEvent(id: ID!): Event
+}
 ```
 
 <br>
 
 # Supports
 - Listing
-  - apps
-  - stages
-  - events
-  - events in an app
-  - stages in an app
-  - events at a stage
-  - stage for an event
-  - events that occur between two dates
+  - Apps
+  - Stages
+  - Events
+  - Events in an app
+  - Stages in an app
+  - Events at a stage
+  - Stage for an event
+  - Events that occur between two dates
 
 - Querying a single
-  - app
-  - stage
-  - event
+  - App
+  - Stage
+  - Event
 
 - Searching by name
-  - apps
-  - stages
-  - events
+  - Apps
+  - Stages
+  - Events
+
+- Adding, updating, and removing
+  - Stages
+  - Events
 
 <br>
 
 # TODO
-- Mutations to allow adding, updating, and removing events and stages
+- Write unit tests
+- Persist data on a database

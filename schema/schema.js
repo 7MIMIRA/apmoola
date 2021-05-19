@@ -53,4 +53,21 @@ module.exports = gql`
     stage(name: String!): Stage!
     event(name: String!): Event!
   }
+
+  type Mutation {
+    addStage(name: String!): Stage
+
+    # id value will determine which stage is being updated
+    updateStage(id: ID!, name: String): Stage
+
+    # either id or name value can be used to find the stage to be removed
+    removeStage(id: ID, name: String): Stage
+
+    addEvent(appId: ID!, stageId: ID!, name: String!, description: String!, image: String!, startsAt: Int!, endsAt: Int!): Event
+
+    # id value will determine which event is being updated
+    updateEvent(id: ID!, appId: ID, stageId: ID, name: String, description: String, image: String, startsAt: Int, endsAt: Int): Event
+
+    removeEvent(id: ID!): Event
+  }
 `;
