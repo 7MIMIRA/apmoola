@@ -17,7 +17,7 @@ module.exports = {
 
   Mutation: {
     addStage: (parent, args) => {
-      const ID = generateID(args.name)
+      const ID = generateID(args.name);
       const newStage = { id: ID, name: args.name };
       const stageAlreadyExists = dataSources.stages.filter(stage => stage.name === newStage.name).length > 0;
       if (stageAlreadyExists) { return };
@@ -25,7 +25,7 @@ module.exports = {
       return newStage;
     },
     updateStage: (parent, args) => {
-      for(let i = 0; i < dataSources.stages.length; i++) {
+      for (let i = 0; i < dataSources.stages.length; i++) {
         if (dataSources.stages[i].id === args.id) {
           dataSources.stages[i] = {
             ...dataSources.stages[i],
@@ -38,11 +38,42 @@ module.exports = {
     },
     removeStage: (parent, args) => {
       const paramName = args.id ? 'id' : 'name';
-      for(let i = 0; i < dataSources.stages.length; i++) {
+      for (let i = 0; i < dataSources.stages.length; i++) {
         if (dataSources.stages[i][paramName] === args[paramName]) {
           let removedStage = dataSources.stages[i];
           dataSources.stages.splice(i, 1);
           return removedStage;
+        }
+      }
+      return;
+    },
+
+    addEvent: (parent, args) => {
+      const ID = generateID(args.name);
+      const newEvent = { id: ID, ...args };
+      const eventAlreadyExists = dataSources.events.filter(event => event.id === newEvent.id).length > 0;
+      if (eventAlreadyExists) { return };
+      dataSources.events.push(newEvent);
+      return newEvent;
+    },
+    updateEvent: (parent, args) => {
+      for (let i = 0; i < dataSources.events.length; i++) {
+        if (dataSources.events[i].id === args.id) {
+          dataSources.events[i] = {
+            ...dataSources.events[i],
+            ...args
+          };
+          return dataSources.events[i];
+        }
+      }
+      return;
+    },
+    removeEvent: (parent, args) => {
+      for (let i = 0; i < dataSources.events.length; i++) {
+        if (dataSources.events[i].id === args.id) {
+          let removedEvent = dataSources.events[i];
+          dataSources.events.splice(i, 1);
+          return removedEvent;
         }
       }
       return;
