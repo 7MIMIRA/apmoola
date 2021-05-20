@@ -1,28 +1,9 @@
-const express = require('express');
-const { ApolloServer } = require('apollo-server-express');
+const { ApolloServer } = require('apollo-server');
 const typeDefs = require('../schema/schema.js');
 const resolvers = require('../resolvers/resolvers.js');
+const server = new ApolloServer({ typeDefs, resolvers });
 
-startApolloServer();
-
-async function startApolloServer() {
-  const app = express();
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers
+server.listen()
+  .then(({ url }) => {
+    console.log(`Server listening on ${url}`);
   });
-
-  await server.start();
-
-  server.applyMiddleware({ app });
-
-  app.use((req, res) => {
-    res.status(200);
-    res.send('Apmoola GraphQL API is up and running!');
-    res.end();
-  });
-
-  await new Promise(resolve => app.listen({ port: 4000 }, resolve));
-  console.log(`listening on http://localhost:4000${server.graphqlPath}`);
-  return { server, app };
-}
