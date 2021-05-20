@@ -18,7 +18,7 @@ async function startApolloServer() {
 
   app.use((req, res) => {
     res.status(200);
-    res.send('Hello!');
+    res.send('Apmoola GraphQL API is up and running!');
     res.end();
   });
 
