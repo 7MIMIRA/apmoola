@@ -65,12 +65,6 @@ type Event {
 type Query {
   apps: [App!]!
   stages: [Stage!]!
-  """
-  start and end parameters are optional if used, it will limit results to events that
-  fall within the start and end dates (inclusive)
-
-  Required Format: milliseconds since unix epoch
-  """
   events(start: Int, end: Int): [Event!]!
 
   app(id: ID, name: String): App!
