@@ -1,120 +1,89 @@
-const { isWithinTimeWindow, generateID } = require('../utils/index.js');
-const dataSources = require('../data.js');
+const { db } = require('../database/connection.js');
+const { App, Stage, Event } = require('../schema/mongodb.js');
 
 module.exports = {
   Query: {
-    apps: () => dataSources.apps,
-    stages: () => dataSources.stages,
-    events: (parent, args) => {
-      let { start, end } = args;
-      if (!start && !end) { return dataSources.events }
-      return dataSources.events.filter(event => isWithinTimeWindow(start, end, event.startsAt, event.endsAt));
+    apps: async () => App.find({}),
+    stages: async () => Stage.find({}),
+    events: async (parent, args) => {
+      const { start, end } = args;
+      if (!start && !end) { return Event.find({}) }
+      const result = await Event.find({ startsAt: { $gte: start }, endsAt: { $lte: end }});
+      return result;
     },
-    app: (parent, args) => {
-      const paramName = args.id ? 'id' : 'name';
-      return dataSources.apps.find(app => app[paramName] === args[paramName]);
+    app: async (parent, args) => {
+      const { id, name } = args;
+      const result = id ? await App.findById(id) : (await App.find({ name: name }))[0];
+      return result;
     },
-    stage: (parent, args) => {
-      const paramName = args.id ? 'id' : 'name';
-      return dataSources.stages.find(stage => stage[paramName] === args[paramName]);
+    stage: async (parent, args) => {
+      const { id, name } = args;
+      const result = id ? await Stage.findById(id) : (await Stage.find({ name: name }))[0];
+      return result;
     },
-    event: (parent, args) => {
-      const paramName = args.id ? 'id' : 'name';
-      return dataSources.events.find(event => event[paramName] === args[paramName]);
+    event: async (parent, args) => {
+      const { id, name } = args;
+      const result = id ? await Event.findById(id) : (await Event.find({ name: name }))[0];
+      return result;
     }
   },
 
   Mutation: {
-    addStage: (parent, args) => {
-      const ID = generateID(args.name);
-      const newStage = { id: ID, name: args.name };
-      const stageAlreadyExists = dataSources.stages.some(stage => stage.name === newStage.name);
-      if (stageAlreadyExists) { return };
-      dataSources.stages.push(newStage);
-      return newStage;
+    addStage: async (parent, args) => {
+      const stageExists = (await Stage.find(args))[0];
+      if (!stageExists) { return Stage.create(args) }
     },
-    updateStage: (parent, args) => {
-      for (let i = 0; i < dataSources.stages.length; i++) {
-        if (dataSources.stages[i].id === args.id) {
-          dataSources.stages[i] = {
-            ...dataSources.stages[i],
-            ...args
-          };
-          return dataSources.stages[i];
-        }
-      }
-      return;
+    updateStage: async (parent, args) => {
+      let update = { ...args };
+      delete update.id;
+      return Stage.findOneAndUpdate({ _id: args.id }, update, { new: true });
     },
-    removeStage: (parent, args) => {
-      const paramName = args.id ? 'id' : 'name';
-      for (let i = 0; i < dataSources.stages.length; i++) {
-        if (dataSources.stages[i][paramName] === args[paramName]) {
-          let removedStage = dataSources.stages[i];
-          dataSources.stages.splice(i, 1);
-          return removedStage;
-        }
-      }
-      return;
+    removeStage: async (parent, args) => {
+      return Stage.findOneAndRemove({ _id: args.id });
     },
 
-    addEvent: (parent, args) => {
-      const ID = generateID(args.name);
-      const newEvent = { id: ID, ...args };
-      const eventAlreadyExists = dataSources.events.some(event => event.id === newEvent.id);
-      if (eventAlreadyExists) { return };
-      dataSources.events.push(newEvent);
-      return newEvent;
+    addEvent: async (parent, args) => {
+      const eventExists = (await Event.find(args))[0];
+      if (!eventExists) { return Event.create(args) }
     },
-    updateEvent: (parent, args) => {
-      for (let i = 0; i < dataSources.events.length; i++) {
-        if (dataSources.events[i].id === args.id) {
-          dataSources.events[i] = {
-            ...dataSources.events[i],
-            ...args
-          };
-          return dataSources.events[i];
-        }
-      }
-      return;
+    updateEvent: async (parent, args) => {
+      let update = { ...args };
+      delete update.id;
+      return Event.findOneAndUpdate({ _id: args.id }, update, { new: true });
     },
-    removeEvent: (parent, args) => {
-      for (let i = 0; i < dataSources.events.length; i++) {
-        if (dataSources.events[i].id === args.id) {
-          let removedEvent = dataSources.events[i];
-          dataSources.events.splice(i, 1);
-          return removedEvent;
-        }
-      }
-      return;
+    removeEvent: async (parent, args) => {
+      return Event.findOneAndRemove({ _id: args.id });
     }
   },
 
   App: {
     id: (parent) => parent.id,
     name: (parent) => parent.name,
-    events: (parent, args) => {
-      let { start, end } = args;
-      if (!start && !end) { return dataSources.events.filter(event => event.appId === parent.id) }
-      return dataSources.events.filter(event => event.appId === parent.id && isWithinTimeWindow(start, end, event.startsAt, event.endsAt));
+    events: async (parent, args) => {
+      const { start, end } = args;
+      if (!start && !end) { return Event.find({ appId: parent.id }) }
+      return Event.find({ appId: parent.id, startsAt: { $gte: start }, endsAt: { $lte: end }});
     },
-    stages: (parent) => {
+    stages: async (parent) => {
+      let events = await Event.find({ appId: parent.id });
       let stageIDs = {};
-      for (let event of dataSources.events) {
-        // checks to make sure the event we are pulling the stageId from is for the current app
-        if (event.appId === parent.id)
-          stageIDs[event.stageId] = true;
+      // crude method of getting all the stageIDs from events
+      // TODO Refactor
+      for (let i = 0; i < events.length; i++) {
+        stageIDs[events[i].stageId] = true;
       }
-      return dataSources.stages.filter(stage => stageIDs[stage.id])
+      console.log(Object.keys(stageIDs));
+      return Stage.find({ _id: Object.keys(stageIDs) });
     }
   },
 
   Stage: {
     id: (parent) => parent.id,
     name: (parent) => parent.name,
-    events: (parent, args) => {
-      let { start, end } = args;
-      if (!start && !end) { return dataSources.events.filter(event => event.stageId === parent.id) }
-      return dataSources.events.filter(event => event.stageId === parent.id && isWithinTimeWindow(start, end, event.startsAt, event.endsAt));
+    events: async (parent, args) => {
+      const { start, end } = args;
+      if (!start && !end) { return Event.find({ stageId: parent.id }) }
+      return Event.find({ stageId: parent.id, startsAt: { $gte: start }, endsAt: { $lte: end }});
     }
   },
 
@@ -127,6 +96,9 @@ module.exports = {
     image: (parent) => parent.image,
     startsAt: (parent) => parent.startsAt,
     endsAt: (parent) => parent.endsAt,
-    stage: (parent) => dataSources.stages.filter(stage => stage.id === parent.stageId)[0]
+    stage: async (parent) => {
+      const result = await Stage.find({ _id: parent.stageId });
+      return result[0];
+    }
   }
 };
