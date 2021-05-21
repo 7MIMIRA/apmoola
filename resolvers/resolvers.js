@@ -72,7 +72,6 @@ module.exports = {
       for (let i = 0; i < events.length; i++) {
         stageIDs[events[i].stageId] = true;
       }
-      console.log(Object.keys(stageIDs));
       return Stage.find({ _id: Object.keys(stageIDs) });
     }
   },
