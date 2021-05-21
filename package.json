@@ -5,6 +5,8 @@
   "main": "server/server.js",
   "scripts": {
     "start": "nodemon server/server.js",
+    "db:seed": "node database/seed.js",
+    "db:status": "node database/test-connection.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,7 +21,8 @@
   "homepage": "https://github.com/7MIMIRA/apmoola#readme",
   "dependencies": {
     "apollo-server": "^2.24.1",
-    "graphql": "^15.5.0"
+    "graphql": "^15.5.0",
+    "mongoose": "^5.12.10"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
