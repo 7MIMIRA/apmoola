@@ -60,8 +60,7 @@ module.exports = gql`
     # id value will determine which stage is being updated
     updateStage(id: ID!, name: String): Stage
 
-    # either id or name value can be used to find the stage to be removed
-    removeStage(id: ID, name: String): Stage
+    removeStage(id: ID!): Stage
 
     addEvent(appId: ID!, stageId: ID!, name: String!, description: String!, image: String!, startsAt: Int!, endsAt: Int!): Event
 
